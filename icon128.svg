@@ -1,0 +1,22 @@
+<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1976D2"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="16" fill="url(#bg)"/>
+  <circle cx="64" cy="64" r="40" fill="none" stroke="white" stroke-width="4"/>
+  <path d="M64 28V64L88 80" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="64" cy="64" r="3" fill="white"/>
+  
+  <!-- Clock markers -->
+  <path d="M64 20V28" stroke="white" stroke-width="2"/>
+  <path d="M108 64H100" stroke="white" stroke-width="2"/>
+  <path d="M64 108V100" stroke="white" stroke-width="2"/>
+  <path d="M20 64H28" stroke="white" stroke-width="2"/>
+  
+  <!-- Text -->
+  <text x="64" y="110" text-anchor="middle" font-family="Arial" font-size="12" fill="white" font-weight="bold">AUTO CLICK</text>
+  <text x="64" y="122" text-anchor="middle" font-family="Arial" font-size="8" fill="white">TIMER</text>
+</svg>

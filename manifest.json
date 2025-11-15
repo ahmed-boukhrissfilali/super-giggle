@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Auto Click Timer Extension",
+  "version": "1.0",
+  "description": "Extension pour automatiser les clics avec timer entre 20-25 minutes",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "downloads"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Auto Click Timer",
+    "default_icon": {
+      "16": "icon16.svg",
+      "48": "icon48.svg",
+      "128": "icon128.svg"
+    }
+  },
+  "icons": {
+    "16": "icon16.svg",
+    "48": "icon48.svg",
+    "128": "icon128.svg"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
