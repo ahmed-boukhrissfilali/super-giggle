@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convertir SVG vers PNG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .converter {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin: 10px;
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Convertisseur SVG vers PNG pour Chrome Web Store</h1>
+    
+    <div class="converter">
+        <h3>📁 Étape 1: Chargez vos fichiers SVG</h3>
+        <input type="file" id="svgFile" accept=".svg" multiple>
+        <br><br>
+        <div id="preview"></div>
+    </div>
+
+    <div class="converter">
+        <h3>⬇️ Étape 2: Téléchargez les PNG convertis</h3>
+        <p>Tailles requises pour Chrome Web Store:</p>
+        <ul>
+            <li><strong>16x16</strong> - Icône dans la barre d'outils</li>
+            <li><strong>48x48</strong> - Page des extensions</li>
+            <li><strong>128x128</strong> - Chrome Web Store</li>
+        </ul>
+        <div id="downloadLinks"></div>
+    </div>
+
+    <script>
+        document.getElementById('svgFile').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const preview = document.getElementById('preview');
+            const downloadLinks = document.getElementById('downloadLinks');
+            
+            preview.innerHTML = '';
+            downloadLinks.innerHTML = '';
+            
+            Array.from(files).forEach(file => {
+                if (file.type === 'image/svg+xml' || file.name.endsWith('.svg')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const svgContent = event.target.result;
+                        convertSVGtoPNG(svgContent, file.name);
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        });
+
+        function convertSVGtoPNG(svgContent, fileName) {
+            const sizes = [16, 48, 128];
+            const baseName = fileName.replace('.svg', '');
+            
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = size;
+                canvas.height = size;
+                
+                const img = new Image();
+                const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(svgBlob);
+                
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, size, size);
+                    
+                    canvas.toBlob(function(blob) {
+                        const pngUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = pngUrl;
+                        link.download = `${baseName}_${size}x${size}.png`;
+                        link.textContent = `📥 Télécharger ${baseName} ${size}x${size}.png`;
+                        link.style.display = 'block';
+                        link.style.margin = '5px 0';
+                        
+                        document.getElementById('downloadLinks').appendChild(link);
+                    }, 'image/png');
+                    
+                    URL.revokeObjectURL(url);
+                };
+                
+                img.src = url;
+            });
+            
+            // Aperçu
+            const previewImg = document.createElement('img');
+            previewImg.src = URL.createObjectURL(new Blob([svgContent], { type: 'image/svg+xml' }));
+            previewImg.style.width = '64px';
+            previewImg.style.height = '64px';
+            previewImg.style.margin = '10px';
+            document.getElementById('preview').appendChild(previewImg);
+        }
+    </script>
+</body>
+</html>
