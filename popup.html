@@ -241,6 +241,22 @@
                 <input type="number" id="maxTime" value="25" min="1" max="60">
             </div>
         </div>
+        
+        <div class="setting-group" style="border-left-color: #9c27b0;">
+            <label>🚪 Options de fenêtre :</label>
+            <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0;">
+                <input type="checkbox" id="pauseOnWindowBlur" checked>
+                <label for="pauseOnWindowBlur" style="margin: 0; font-weight: normal;">Pause automatique quand je quitte Chrome</label>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0;">
+                <input type="checkbox" id="autoResumeOnFocus" checked>
+                <label for="autoResumeOnFocus" style="margin: 0; font-weight: normal;">Reprendre automatiquement quand je reviens</label>
+            </div>
+            <div style="background: #f3e5f5; border: 1px solid #9c27b0; border-radius: 5px; padding: 8px; margin-top: 10px; font-size: 12px;">
+                <strong>💡 Fonctionnement en arrière-plan :</strong><br>
+                Le compteur continue même si vous fermez cette popup ou changez d'onglet. L'extension détecte automatiquement quand vous quittez/revenez sur Chrome.
+            </div>
+        </div>
     </div>
     
     <script src="popup.js"></script>

@@ -19,17 +19,30 @@ const minTime = document.getElementById('minTime');
 const maxTime = document.getElementById('maxTime');
 const testBtn = document.getElementById('testBtn');
 const testFinalBtn = document.getElementById('testFinalBtn');
+const pauseOnWindowBlur = document.getElementById('pauseOnWindowBlur');
+const autoResumeOnFocus = document.getElementById('autoResumeOnFocus');
 
 // Charger les paramètres sauvegardés
-chrome.storage.local.get(['buttonSelector', 'finalSelector', 'minTime', 'maxTime'], (result) => {
+chrome.storage.local.get([
+    'buttonSelector', 
+    'finalSelector', 
+    'minTime', 
+    'maxTime', 
+    'pauseOnWindowBlur', 
+    'autoResumeOnFocus'
+], (result) => {
     if (result.buttonSelector) buttonSelector.value = result.buttonSelector;
     if (result.finalSelector) finalSelector.value = result.finalSelector;
     if (result.minTime) minTime.value = result.minTime;
     if (result.maxTime) maxTime.value = result.maxTime;
+    
+    // Charger les nouvelles options (par défaut à true)
+    pauseOnWindowBlur.checked = result.pauseOnWindowBlur !== false;
+    autoResumeOnFocus.checked = result.autoResumeOnFocus !== false;
 });
 
 // Sauvegarder les paramètres à chaque modification
-[buttonSelector, finalSelector, minTime, maxTime].forEach(input => {
+[buttonSelector, finalSelector, minTime, maxTime, pauseOnWindowBlur, autoResumeOnFocus].forEach(input => {
     input.addEventListener('change', saveSettings);
 });
 
@@ -38,7 +51,14 @@ function saveSettings() {
         buttonSelector: buttonSelector.value,
         finalSelector: finalSelector.value,
         minTime: parseInt(minTime.value),
-        maxTime: parseInt(maxTime.value)
+        maxTime: parseInt(maxTime.value),
+        pauseOnWindowBlur: pauseOnWindowBlur.checked,
+        autoResumeOnFocus: autoResumeOnFocus.checked
+    });
+    
+    console.log('⚙️ Paramètres sauvegardés:', {
+        pauseOnWindowBlur: pauseOnWindowBlur.checked,
+        autoResumeOnFocus: autoResumeOnFocus.checked
     });
 }
 
@@ -75,18 +95,36 @@ function updateDisplay() {
     // Mettre à jour l'affichage
     timerDisplay.textContent = formatTime(remainingTime);
     
-    // Mettre à jour le statut de l'interface
-    if (isRunning) {
-        startBtn.style.display = 'none';
-        stopBtn.style.display = 'block';
-        status.textContent = `✅ Actif - Cycle ${currentCycle} - ${formatTime(remainingTime)}`;
-        status.className = 'status active';
-    } else {
-        startBtn.style.display = 'block';
-        stopBtn.style.display = 'none';
-        status.textContent = '❌ Inactif';
-        status.className = 'status inactive';
-    }
+    // Vérifier si en pause à cause de la perte de focus
+    chrome.storage.local.get(['isPausedByWindowBlur'], (result) => {
+        // Mettre à jour le statut de l'interface
+        if (isRunning) {
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            
+            if (result.isPausedByWindowBlur) {
+                status.textContent = `⏸️ En pause (Focus perdu) - Cycle ${currentCycle}`;
+                status.className = 'status';
+                status.style.backgroundColor = '#fff3cd';
+                status.style.color = '#856404';
+                status.style.border = '1px solid #ffeaa7';
+            } else {
+                status.textContent = `✅ Actif - Cycle ${currentCycle} - ${formatTime(remainingTime)}`;
+                status.className = 'status active';
+                status.style.backgroundColor = '#d4edda';
+                status.style.color = '#155724';
+                status.style.border = '1px solid #c3e6cb';
+            }
+        } else {
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+            status.textContent = '❌ Inactif';
+            status.className = 'status inactive';
+            status.style.backgroundColor = '#fff3cd';
+            status.style.color = '#856404';
+            status.style.border = '1px solid #ffeaa7';
+        }
+    });
 }
 
 // Synchroniser avec l'état en arrière-plan (utilisé au chargement)
